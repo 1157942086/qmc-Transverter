@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
+import re
 
 class Decode(object):
     def __init__(self):
@@ -35,6 +36,7 @@ class Decode(object):
         return ret
 
     def conversion(self, path):
+        print('Begin',path)
         with open(path, 'rb') as f:
             buf = f.read()
             buf_len = len(buf)
@@ -47,16 +49,17 @@ class Decode(object):
 if __name__ == '__main__':
     if not os.path.exists('./target'):
         os.mkdir('./target')
+
+    normalType = re.compile(r'.qmc\d')
     for i in os.listdir('./'):
         d = Decode()
         pathname = os.path.join('./',i)
-        print('Begin {0}'.format(pathname))
         if os.path.isfile(pathname) and os.path.splitext(pathname)[-1] == '.qmcflac':
             buf = d.conversion(pathname)
             with open('./target/%s.flac' % os.path.splitext(pathname)[0],'wb') as nf:
                 nf.write(buf)
                 print('finish {0}'.format(pathname))
-        elif os.path.isfile(pathname) and os.path.splitext(pathname)[-1] == '.qmc0':
+        elif os.path.isfile(pathname) and normalType.match(os.path.splitext(pathname)[-1]):
             buf = d.conversion(pathname)
             with open('./target/%s.mp3' % os.path.splitext(pathname)[0],'wb') as nf:
                 nf.write(buf)
